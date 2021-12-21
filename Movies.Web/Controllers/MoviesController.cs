@@ -26,6 +26,8 @@ namespace Movies.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(string search)
         {
+            // should validate search and return error if empty of null
+
             var summaries = await _moviesRepository.GetSummariesAsync(search);
             
             var model = new SearchResultsModel();
@@ -42,6 +44,8 @@ namespace Movies.Web.Controllers
 
         public async Task<IActionResult> Details(string id)
         {
+            // should validate id and return error if empty of null
+
             var details = await _moviesRepository.GetDetailsAsync(id);
 
             // reusing for simplicity
