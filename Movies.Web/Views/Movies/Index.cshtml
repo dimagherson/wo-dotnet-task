@@ -2,12 +2,17 @@
 @{
     ViewData["Title"] = "Movies List";
 }
-    <section class="movies" id="movies">
-        <h2>Featured Movies</h2>
-        <div class="row">
-            @foreach (var movie in Model.Results)
-            {
-                <partial name="MovieResult" model="movie" />
-            }
-            </div>
-    </section>
+<section class="movies" id="movies">
+    <h2>Featured Movies</h2>
+    @using (Html.BeginForm("Index", "Movies"))
+    {
+        <input type="text" name="search" placeholder="Search word..." />
+        <input type="submit" value="Search" />
+    }
+    <div class="row">
+        @foreach (var movie in Model.Results)
+        {
+            <partial name="MovieResult" model="movie" />
+        }
+    </div>
+</section>

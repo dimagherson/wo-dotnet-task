@@ -20,13 +20,39 @@ namespace Movies.Repository
 
         public async Task<IList<MovieSummary>> GetSummariesAsync(string searchWord)
         {
-            var url = $"{_options.Url}?apiKey={_options.Key}";
+            var url = GetUrl();
 
             if (!string.IsNullOrWhiteSpace(searchWord))
             {
                 url = $"{url}&s={searchWord}";
             }
 
+            var rawResult = await FetchAsync<OMDbRawResult>(url);
+
+            return rawResult?.ToSummaries();
+        }
+
+        public async Task<MovieSummary> GetDetailsAsync(string id)
+        {
+            var url = GetUrl();
+
+            if (!string.IsNullOrWhiteSpace(id))
+            {
+                url = $"{url}&i={id}";
+            }
+
+            var rawResult = await FetchAsync<OMDbRawItemResult>(url);
+
+            return rawResult?.ToSummary();
+        }
+
+        private string GetUrl()
+        {
+            return $"{_options.Url}?apiKey={_options.Key}";
+        }
+
+        private async Task<T> FetchAsync<T>(string url)
+        {
             try
             {
                 var client = new HttpClient();
@@ -35,47 +61,53 @@ namespace Movies.Repository
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    return null; // Soft failure. Alternatively can throw exception
+                    return default; // Soft failure. Alternatively can throw exception
                 }
 
                 var result = await response.Content.ReadAsStreamAsync();
 
-                var rawResult = _parser.Parse<OMDbRawResult>(result);
+                var rawResult = _parser.Parse<T>(result);
 
-                return rawResult.ToSummaries();
+                return rawResult;
             }
             catch (Exception ex)
             {
                 // logging...
-                return null;
+                return default;
             }
         }
 
         private class OMDbRawResult
         {
-            public List<Item> Search { get; set; } = new List<Item>();
+            public List<OMDbRawItemResult> Search { get; set; } = new List<OMDbRawItemResult>();
             public int totalResults { get; set; }
             public bool Response { get; set; }
 
             public IList<MovieSummary> ToSummaries()
             {
-                return Search.Select(x => new MovieSummary
-                {
-                    Id = x.ImdbID,
-                    Title = x.Title,
-                    ImageUrl = x.Poster,
-                    Year = x.Year
-                }).ToList();
+                return Search.Select(x => x.ToSummary()).ToList();
             }
         }
 
-        private class Item
+        // cheating a bit, reusing this in 'details' for simplicity
+        private class OMDbRawItemResult
         {
             public string Title { get; set; }
             public string Year { get; set; }
             public string ImdbID { get; set; }
             public string Type { get; set; }
             public string Poster { get; set; }
+
+            public MovieSummary ToSummary()
+            {
+                return new MovieSummary
+                {
+                    Id = ImdbID,
+                    Title = Title,
+                    ImageUrl = Poster,
+                    Year = Year
+                };
+            }
         }
     }
 }

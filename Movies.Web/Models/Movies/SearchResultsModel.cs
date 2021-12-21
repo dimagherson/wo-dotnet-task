@@ -4,6 +4,6 @@ namespace Movies.Web.Models.Movies
 {
     public class SearchResultsModel
     {
-        public IList<SearchResultModel> Results { get; set; }
+        public IList<SearchResultModel> Results { get; set; } = new List<SearchResultModel>();
     }
 }

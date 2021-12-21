@@ -9,7 +9,7 @@
                 <img src="@Model.ImageUrl" alt="Movie" class="w-100">
             </div>
             <p class="tagline card-text text-xs-center">@Model.Year</p>
-            <a href="@Url.Action("Details")" class="btn btn-primary btn-block"><i class="fa fa-eye"></i> View Details</a>
+            <a href="@Url.Action("Details", new { id = Model.Id })" class="btn btn-primary btn-block"><i class="fa fa-eye"></i> View Details</a>
         </div>
     </article>
 </div>

@@ -16,9 +16,17 @@ namespace Movies.Web.Controllers
             _moviesRepository = moviesRepository ?? throw new ArgumentNullException(nameof(moviesRepository));
         }
 
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public IActionResult Index()
         {
-            var summaries = await _moviesRepository.GetSummariesAsync("Avengers");
+            var model = new SearchResultsModel();
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Index(string search)
+        {
+            var summaries = await _moviesRepository.GetSummariesAsync(search);
             
             var model = new SearchResultsModel();
             model.Results = summaries.Select(s => new SearchResultModel
@@ -32,9 +40,20 @@ namespace Movies.Web.Controllers
             return View(model);
         }
 
-        public IActionResult Details()
+        public async Task<IActionResult> Details(string id)
         {
-            return View();
+            var details = await _moviesRepository.GetDetailsAsync(id);
+
+            // reusing for simplicity
+            var model = new SearchResultModel
+            {
+                Id = details.Id,
+                ImageUrl = details.ImageUrl,
+                Year = details.Year,
+                Title = details.Title
+            };
+
+            return View(model);
         }
     }
 }

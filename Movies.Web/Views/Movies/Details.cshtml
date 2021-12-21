@@ -1,1 +1,10 @@
-﻿@model Movies.Web.Models.Movies.DetailsModel
+﻿@model Movies.Web.Models.Movies.SearchResultModel
+@{
+    ViewData["Title"] = "Movies Details";
+}
+<section class="movies" id="movies">
+    <h2>Featured Movies</h2>
+    <div class="row">
+        <partial name="MovieResult" model="@Model" />
+    </div>
+</section>
