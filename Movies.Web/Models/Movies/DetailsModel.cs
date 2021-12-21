@@ -1,6 +1,6 @@
 ﻿namespace Movies.Web.Models.Movies
 {
-    public class Details
+    public class DetailsModel
     {
 
     }
