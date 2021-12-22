@@ -1,4 +1,5 @@
 ﻿@model Movies.Web.Models.Movies.SearchResultModel
+
 <div class="col-lg-3 col-md-4 col-sm-6">
     <article class="card">
         <header class="title-header">
@@ -13,3 +14,12 @@
         </div>
     </article>
 </div>
+
+<script type="application/ld+json">
+{
+    "@@context": "http://schema.org",
+    "name": "@Model.Title",
+    "image": "@Model.ImageUrl",
+    "dateCreated": "@Model.Year"
+}
+</script>
