@@ -16,17 +16,12 @@ namespace Movies.Web.Controllers
             _moviesRepository = moviesRepository ?? throw new ArgumentNullException(nameof(moviesRepository));
         }
 
-        [HttpGet]
-        public IActionResult Index()
-        {
-            var model = new SearchResultsModel();
-            return View(model);
-        }
-
-        [HttpPost]
         public async Task<IActionResult> Index(string search)
         {
-            // should validate search and return error if empty of null
+            if (string.IsNullOrWhiteSpace(search))
+            {
+                return View(new SearchResultsModel());
+            }
 
             var summaries = await _moviesRepository.GetSummariesAsync(search);
             
